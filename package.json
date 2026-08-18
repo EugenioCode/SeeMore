@@ -1,0 +1,25 @@
+{
+  "name": "seemore",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SeeMore - Making visual details accessible.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "@types/node": "^22.13.4",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "typescript": "^5.7.2",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.8"
+  }
+}
