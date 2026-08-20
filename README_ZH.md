@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="版本 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="版本 0.2.0">
   <img src="https://img.shields.io/badge/platform-Chrome%20148%2B-lightgrey" alt="平台：Chrome 148+">
   <img src="https://img.shields.io/badge/built%20with-Vue%203%20%7C%20TypeScript%20%7C%20Vite-42b883" alt="使用 Vue 3、TypeScript 和 Vite 构建">
 </p>
@@ -25,7 +25,7 @@ SeeMore 是一款面向视觉障碍用户的 Chrome 扩展，目标是帮助用�
 项目将优先使用 Chrome Built-in AI 在浏览器本地分析图片，并以结构化、可追问的方式呈现商品外观、颜色、材质和图片差异等信息。SeeMore 强调事实优先、不确定性表达、键盘操作和屏幕阅读器体验。
 
 > [!IMPORTANT]
-> SeeMore 目前处于早期开发阶段。扩展基础架构和商品页面上下文提取已经完成，AI 图片分析模块尚未接入。
+> SeeMore 目前处于早期开发阶段。0.2.0 版本已完成第二阶段的单图本地 AI 分析闭环，需要在支持 Chrome Built-in AI 的 Chrome 148+ 设备上运行。
 
 ## 当前能力
 
@@ -35,14 +35,28 @@ SeeMore 是一款面向视觉障碍用户的 Chrome 扩展，目标是帮助用�
 - Service Worker、Content Script 和 Side Panel 之间的类型安全消息通信
 - 使用语义化 HTML、ARIA 状态通知和键盘友好的侧边栏界面
 - 提供 16、32、48 和 128 像素的 Chrome 扩展图标
+- 检测 Chrome Built-in AI 能力并显示模型准备及下载进度
+- 使用结构化输出生成便于视障用户甄别商品的一段式自然语言描述
+- 通过 Translator API 优先生成中文结果，翻译不可用时保留英文结果
+
+## 版本记录
+
+### 0.2.0 — 2026-08-20
+
+- 完成从商品图片右键菜单打开 Side Panel 并进行图片识别的完整流程
+- 接入 Chrome Built-in AI 本地图片分析，显示模型准备和下载进度
+- 将图片视觉细节与页面商品信息整理为一段自然语言描述
+- 增加跨域图片错误处理、取消分析、重新分析和重新读取页面状态
+- 优化 Side Panel 的紧凑布局、键盘操作和高对比度视觉体验
+
+### 0.1.0
+
+- 完成 Chrome Manifest V3 扩展基础架构和项目初始化
 
 ## 规划能力
 
-- 使用 Chrome Built-in AI 分析单张商品图片
-- 输出简洁描述和详细描述，并区分事实、视觉推断与不确定信息
 - 自动识别商品图片组，支持多图理解和差异比较
 - 支持用户围绕当前商品继续提问
-- 完善模型下载、能力检测、错误恢复及无障碍状态反馈
 
 详细产品定义与开发范围请参阅 [SeeMore 产品需求文档](./SeeMore%20产品需求文档%20PRD.md)。
 

@@ -14,9 +14,20 @@ export type AnalysisState =
 
 export interface ImageReference {
   srcUrl?: string;
+  analysisDataUrl?: string;
   alt?: string;
   width?: number;
   height?: number;
+  viewportX?: number;
+  viewportY?: number;
+  renderedWidth?: number;
+  renderedHeight?: number;
+  viewportWidth?: number;
+  viewportHeight?: number;
+}
+
+export interface ProductImageAnalysis {
+  description: string;
 }
 
 export interface ProductContext {
@@ -31,8 +42,10 @@ export interface ProductContext {
 }
 
 export interface AnalyzeImageRequest {
+  requestId: string;
   tabId: number;
   trigger: TriggerSource;
+  ready?: boolean;
   image?: ImageReference;
   context?: ProductContext;
 }
@@ -41,10 +54,11 @@ export type RuntimeMessage =
   | { type: 'GET_PENDING_REQUEST' }
   | { type: 'REQUEST_CURRENT_PAGE' }
   | { type: 'COLLECT_PAGE_CONTEXT'; image?: ImageReference }
-  | { type: 'PAGE_CONTEXT_READY'; context: ProductContext };
+  | { type: 'ANALYSIS_REQUEST_READY'; request: AnalyzeImageRequest };
 
 export interface RuntimeResponse {
   request?: AnalyzeImageRequest;
   context?: ProductContext;
+  image?: ImageReference;
   error?: string;
 }

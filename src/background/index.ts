@@ -48,16 +48,36 @@ function sendToTab<T>(tabId: number, message: RuntimeMessage): Promise<T | undef
 async function collectContext(
   tabId: number,
   image?: ImageReference
-): Promise<ProductContext | undefined> {
+): Promise<{ context?: ProductContext; image?: ImageReference }> {
   try {
     await injectContentScript(tabId);
     const response = await sendToTab<RuntimeResponse>(tabId, {
       type: 'COLLECT_PAGE_CONTEXT',
       image
     });
-    return response?.context;
+    return { context: response?.context, image: response?.image ?? image };
   } catch {
-    return undefined;
+    return { image };
+  }
+}
+
+async function attachVisibleCapture(
+  tab: chrome.tabs.Tab,
+  image?: ImageReference
+): Promise<ImageReference | undefined> {
+  if (!image || typeof tab.windowId !== 'number') return image;
+  if (
+    typeof image.viewportX !== 'number'
+    || typeof image.viewportY !== 'number'
+    || typeof image.renderedWidth !== 'number'
+    || typeof image.renderedHeight !== 'number'
+  ) return image;
+
+  try {
+    const analysisDataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
+    return { ...image, analysisDataUrl };
+  } catch {
+    return image;
   }
 }
 
@@ -67,13 +87,31 @@ async function prepareRequest(
   image?: ImageReference
 ): Promise<AnalyzeImageRequest | undefined> {
   if (typeof tab.id !== 'number') return undefined;
-  const request: AnalyzeImageRequest = {
+  const requestId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const pendingRequest: AnalyzeImageRequest = {
+    requestId,
     tabId: tab.id,
     trigger,
-    image,
-    context: await collectContext(tab.id, image)
+    ready: false,
+    image
   };
+  pendingRequests.set(tab.id, pendingRequest);
+
+  const pageData = await collectContext(tab.id, image);
+  const capturedImage = await attachVisibleCapture(tab, pageData.image);
+  const request: AnalyzeImageRequest = {
+    requestId,
+    tabId: tab.id,
+    trigger,
+    ready: true,
+    image: capturedImage,
+    context: pageData.context
+  };
+  if (pendingRequests.get(tab.id) !== pendingRequest) return pendingRequests.get(tab.id);
   pendingRequests.set(tab.id, request);
+  void chrome.runtime.sendMessage({ type: 'ANALYSIS_REQUEST_READY', request }).catch(() => {
+    // Side Panel may not be open yet.
+  });
   return request;
 }
 
@@ -103,8 +141,7 @@ chrome.commands.onCommand.addListener((command) => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== CONTEXT_MENU_ID || typeof tab?.id !== 'number') return;
   const image: ImageReference = {
-    srcUrl: info.srcUrl,
-    alt: info.selectionText
+    srcUrl: info.srcUrl
   };
   openSidePanel(tab.id);
   void prepareRequest(tab, 'context-menu', image);
@@ -112,7 +149,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 chrome.runtime.onMessage.addListener(
   (message: RuntimeMessage, _sender, sendResponse: (response: RuntimeResponse) => void) => {
-    if (message.type === 'GET_PENDING_REQUEST') {
+  if (message.type === 'GET_PENDING_REQUEST') {
       void getActiveTab().then((tab) => {
         const request = typeof tab?.id === 'number' ? pendingRequests.get(tab.id) : undefined;
         sendResponse({ request });

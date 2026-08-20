@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0">
   <img src="https://img.shields.io/badge/platform-Chrome%20148%2B-lightgrey" alt="Platform: Chrome 148+">
   <img src="https://img.shields.io/badge/built%20with-Vue%203%20%7C%20TypeScript%20%7C%20Vite-42b883" alt="Built with Vue 3, TypeScript, and Vite">
 </p>
@@ -25,7 +25,7 @@ SeeMore is a Chrome extension designed to help blind and low-vision users unders
 The project is designed to prioritize Chrome Built-in AI for on-device image analysis and present product appearance, color, material, and image differences in a structured, follow-up-friendly format. SeeMore emphasizes facts before inference, explicit uncertainty, keyboard access, and screen-reader usability.
 
 > [!IMPORTANT]
-> SeeMore is currently in early development. The extension foundation and product-page context extraction are implemented, while AI image analysis is not connected yet.
+> SeeMore is currently in early development. Version 0.2.0 completes the second-phase single-image local AI analysis loop and requires a Chrome 148+ device that supports Chrome Built-in AI.
 
 ## Current Capabilities
 
@@ -35,14 +35,28 @@ The project is designed to prioritize Chrome Built-in AI for on-device image ana
 - Type-safe messaging between the Service Worker, Content Script, and Side Panel
 - Semantic HTML, ARIA status announcements, and a keyboard-friendly panel interface
 - Chrome extension icons in 16, 32, 48, and 128 pixels
+- Chrome Built-in AI capability detection with model preparation and download progress
+- Structured output rendered as one natural-language paragraph for product identification
+- Translator API Chinese output with an English fallback when translation is unavailable
+
+## Version History
+
+### 0.2.0 — 2026-08-20
+
+- Added end-to-end right-click image analysis from product pages into the Side Panel
+- Added local Chrome Built-in AI image analysis with model preparation and download progress
+- Added one natural-language product description combining visual details and product context
+- Added cross-origin image error handling, cancellation, retry, and pending-image refresh states
+- Refined the Side Panel for compact, keyboard-friendly, high-contrast use
+
+### 0.1.0
+
+- Initialized the Chrome Manifest V3 extension foundation and project structure
 
 ## Planned Capabilities
 
-- Analyze individual product images with Chrome Built-in AI
-- Provide concise and detailed descriptions while separating facts, visual inference, and uncertainty
 - Detect product galleries for multi-image understanding and comparison
 - Allow follow-up questions about the current product
-- Add model-download handling, capability detection, error recovery, and accessible status feedback
 
 For the complete product definition and development scope, see the [SeeMore Product Requirements Document](./SeeMore%20产品需求文档%20PRD.md) (Chinese).
 
